@@ -28,13 +28,16 @@ for section in sections:
 
         description_full = dish.find('div', class_='t1025__descr').get_text(strip=True)
 
-        match = re.search(r'(.+?)(?:\s|^)(\d+\s*(?:гр|г)\.?)$', description_full)
-        if match:
-            composition = match.group(1).strip().rstrip(',')
-            weight_info = match.group(2).strip()
-        else:
-            composition = ""
-            weight_info = description_full.strip()
+        weight_match = re.search(r'(\d+(?:\/\d+)?\s*(?:гр|г)\.?)', description_full)
+        weight_info = weight_match.group(0) if weight_match else ""
+
+        composition = re.sub(r'\d+(?:\/\d+)?\s*(?:гр|г)\.?', '', description_full).strip().rstrip(',')
+
+        if not weight_info:
+            name_weight_match = re.search(r'(\d+(?:\/\d+)?\s*(?:гр|г)\.?)', name)
+            if name_weight_match:
+                weight_info = name_weight_match.group(0)
+                name = re.sub(r'\d+(?:\/\d+)?\s*(?:гр|г)\.?', '', name).strip()
 
         price = dish.find('div', class_='t1025__price-value').get_text(strip=True)
 
