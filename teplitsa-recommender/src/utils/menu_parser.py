@@ -28,20 +28,19 @@ for section in sections:
 
         description_full = dish.find('div', class_='t1025__descr').get_text(strip=True)
 
-        weight_match = re.search(r'(\d+)\s*(?:гр|г)\.?$', description_full)
-        if weight_match:
-            weight_info = weight_match.group(1) + " гр."
+        match = re.search(r'(.+?)(?:\s|^)(\d+\s*(?:гр|г)\.?)$', description_full)
+        if match:
+            composition = match.group(1).strip().rstrip(',')
+            weight_info = match.group(2).strip()
         else:
-            weight_match = re.search(r'(\d+)\s*', description_full)
-            if weight_match:
-                weight_info = weight_match.group(1) + " гр."
-            else:
-                weight_info = ""
+            composition = ""
+            weight_info = description_full.strip()
 
         price = dish.find('div', class_='t1025__price-value').get_text(strip=True)
 
         section_dishes.append({
             'name': name,
+            'composition': composition,
             'weight_info': weight_info,
             'price': price
         })
